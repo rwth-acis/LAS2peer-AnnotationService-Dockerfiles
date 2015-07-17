@@ -1,0 +1,8 @@
+1. docker@boot2docker:~/dockerFromPc/ArangoDB/arangodb-data$ docker build -t arangodbdata .
+2. docker@boot2docker:~/dockerFromPc/ArangoDB/arangodb-data$ docker run -d --name arangodbData arangodbdata
+3. docker@boot2docker:~/dockerFromPc/ArangoDB$ docker build -t arangodbimage .
+4. docker@boot2docker:~/dockerFromPc/ArangoDB$ docker run -it --volumes-from arangodbData --name arangoDbContainer arangodbimage /bin/bash
+5. docker@boot2docker:~/dockerFromPc/Service/annotationService-data$ docker build -t annotationservicedataimage .
+6. docker@boot2docker:~/dockerFromPc/Service/annotationService-data$ docker run -d -e "PORT=8080" -e "EPURL=http://localhost:8080/annotations/" -e "DB_PORT=8529" -e "USERNAME=User" -e "PASSWORD=pass" -e "DATABASE=annotations" -e "GRAPHNAME=AnnotationsGraph" -e "ANN_CONTEXT=Annotated" -e "PLACETYPE=TextTypeAnnotation" -e "TIMETYPE=TextTypeAnnotation" -e "GENERATE_ID_URL=http://localhost:8082/generateId/id" --name annotationservicedataContainer annotationservicedataimage 
+7. docker@boot2docker:~/dockerFromPc/Service/Dockerfile$ docker build -t annotationserviceimage .
+8. docker@boot2docker:~/dockerFromPc/Service/Dockerfile$ docker run -d --volumes-from annotationservicedataContainer --link arangoDbContainer:arangodb --name annotationServiceContainer annotationserviceimage
